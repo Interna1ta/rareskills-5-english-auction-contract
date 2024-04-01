@@ -2,6 +2,7 @@
 pragma solidity ^0.8.21;
 
 import {IERC721} from "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import {IERC721Receiver} from "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
 
 error NFTAuction__OnlySeller(string message);
 error NFTAuction__AuctionNotExist(string message);
@@ -16,7 +17,7 @@ error NFTAuction__NoBidToWithdraw(string message);
 error NFTAuction__AuctionNotEnded(string message);
 error NFTAuction__ReservePriceNotMet(string message);
 
-contract NFTAuction {
+contract NFTAuction is IERC721Receiver {
     struct Auction {
         uint256 nftId;
         address seller;
@@ -211,5 +212,14 @@ contract NFTAuction {
             _nftId,
             amount
         );
+    }
+
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes calldata
+    ) external pure override returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 }
